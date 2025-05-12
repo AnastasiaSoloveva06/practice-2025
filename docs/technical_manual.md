@@ -9,7 +9,7 @@
 ## 2 Основы Telegram-ботов
 
 **Telegram-боты** - это автоматизированные аккаунты в Telegram, взаимодействующие с пользователями через:
-- текстовые команды (/start);
+- текстовые команды (`/start`);
 - кнопки;
 - встроенные интерфейсы (Web Apps).
 
@@ -152,9 +152,17 @@ _Вывод:_ Исследование подтвердило востребов
 
 - _Telegram:_
    - Откройте Telegram и найдите бота [@BotFather](https://t.me/BotFather).
+     <img width="1662" alt="Снимок экрана 2025-05-11 в 23 10 02" src="https://github.com/user-attachments/assets/5e583050-aaaf-476b-89f0-1cfe34c84832" />
+
    - Введите команду ```/newbot```
-   - Следуйте инструкциям: укажите имя бота и username 
+   - Следуйте инструкциям: укажите имя бота и username
+ 
+     ![IMAGE 2025-05-11 23:09:22](https://github.com/user-attachments/assets/2ae80bd7-87f9-42d4-ab59-ba70be30e757)
+
    - Скопируйте полученный токен ((выглядит как ```123456789:ABCdefGHIJKlmNoPQRsTUVwxyZ```))
+ 
+     ![IMAGE 2025-05-11 23:09:24](https://github.com/user-attachments/assets/fdc808a2-52b1-420a-9375-0bb7203804a8)
+
 
 - _GigaChat (от Сбера):_
    - Зарегистрируйтесь на [developers.sber.ru](https://developers.sber.ru/).
