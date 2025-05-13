@@ -1,0 +1,28 @@
+version: '2.1'
+
+x-service: &default-service
+  restart: unless-stopped
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - .env
+  volumes:
+    - ./logs:/app/logs
+
+services:
+  bot:
+    build:
+       environment:
+              TELEGRAM_TOKEN: "7873995348:AAEjGD5wrvGoYcgBLQoaRCBmXg0fxluxLL8"
+              GIGACHAT_AUTH: "NjkzMTM4MzAtZjY1Zi00NzI4LWFjZmMtYTZlOTRiMGU2OTFiOjMxNTcxNGMzLWRmN2EtNGQ5YS1hNzE5LWU2YWVmODljODc0OQ=="
+    <<: *default-service
+    container_name: mospolytech-bot
+    image: anastasiasoloveva06/mospolytech-bot:latest
+    command: python bot.py
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge
