@@ -1,0 +1,33 @@
+baseURL = 'https://StudyAI.ru/'
+languageCode = 'ru-ru'
+title = 'Применение ИИ в образовании'
+theme = "blowfish"
+
+[menu]
+  [[menu.main]]
+    name = "Главная"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "О проекте"
+    url = "/about/"
+    weight = 2
+
+  [[menu.main]]
+    name = "Участники"
+    url = "/team/"
+    weight = 3
+
+  [[menu.main]]
+    name = "Журнал"
+    url = "/posts/journal/"
+    weight = 4
+
+  [[menu.main]]
+    name = "Ресурсы"
+    url = "/resources/"
+    weight = 5
+    
+    baseURL = ""
+relativeURLs = true  
