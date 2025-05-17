@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 from gigachat import GigaChat
 from typing import Dict, List
 
@@ -28,7 +29,7 @@ FAQ = {
     "общежитие": """
 Информация об общежитиях:
 - Правила проживания: https://mospolytech.ru/obschejitiya/#pravila
-- Контакты:https://mospolytech.ru/obschejitiya/
+- Контакты: https://mospolytech.ru/obschejitiya/
     """,
     "стипендия": """
 Информация о стипендиях:
@@ -52,6 +53,21 @@ SYSTEM_PROMPT = """
 Официальный сайт: https://mospolytech.ru
 """
 
+# Создаем главное меню
+def create_main_keyboard():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    buttons = [
+        types.KeyboardButton('Расписание'),
+        types.KeyboardButton('Контакты'),
+        types.KeyboardButton('Поступление'),
+        types.KeyboardButton('Общежитие'),
+        types.KeyboardButton('Стипендия'),
+        types.KeyboardButton('Учебные материалы'),
+        types.KeyboardButton('Помощь')
+    ]
+    markup.add(*buttons)
+    return markup
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     welcome_text = """
@@ -60,57 +76,63 @@ def send_welcome(message):
 Я могу помочь с:
 🔹 Расписанием занятий
 🔹 Контактами университета
+🔹 Поступлением
+🔹 Общежитием
+🔹 Стипендиями
 🔹 Учебными материалами
-🔹 Часто задаваемыми вопросами
 
-Используй команды:
-/rasp - Расписание
-/contacts - Контакты
-/faq - Частые вопросы
-/materials - Учебные материалы
+Выберите нужный раздел или задайте вопрос:
     """
-    bot.send_message(message.chat.id, welcome_text)
+    bot.send_message(message.chat.id, welcome_text, reply_markup=create_main_keyboard())
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
     help_text = """
-Доступные команды:
+ℹ️ Доступные команды:
 /start - Начало работы
-/rasp - Поиск расписания
-/contacts - Контакты университета
-/faq - Часто задаваемые вопросы
-/materials - Поиск учебных материалов
+/help - Помощь по боту
+
+Основные разделы:
+• Расписание - Актуальное расписание занятий
+• Контакты - Контактная информация университета
+• Поступление - Информация для абитуриентов
+• Общежитие - Информация о студенческих общежитиях
+• Стипендия - Виды и условия получения стипендий
+• Учебные материалы - Доступ к учебным ресурсам
+
+Вы также можете задать вопрос в свободной форме.
     """
-    bot.send_message(message.chat.id, help_text)
+    bot.send_message(message.chat.id, help_text, reply_markup=create_main_keyboard())
 
-@bot.message_handler(commands=['rasp'])
-def send_schedule(message):
-    bot.send_message(message.chat.id, "Актуальное расписание занятий доступно на сайте: https://rasp.dmami.ru/site/")
-
-@bot.message_handler(commands=['contacts'])
-def send_contacts(message):
-    bot.send_message(message.chat.id, FAQ['контакты'])
-
-@bot.message_handler(commands=['faq'])
-def send_faq(message):
-    faq_text = "Часто задаваемые вопросы:\n\n" + "\n".join([f"▪️ {key.capitalize()}" for key in FAQ.keys()])
-    bot.send_message(message.chat.id, faq_text + "\n\nНапиши интересующий вопрос, например 'расписание'")
-
-@bot.message_handler(commands=['materials'])
-def send_materials(message):
-    bot.send_message(message.chat.id, FAQ['учебные материалы'])
-
-@bot.message_handler(func=lambda message: message.text.lower() in FAQ)
-def handle_faq(message):
-    bot.send_message(message.chat.id, FAQ[message.text.lower()])
-
-@bot.message_handler(func=lambda m: True)
-def handle_message(message):
-    if any(word in message.text.lower() for word in ['политех', 'моспол', 'универ', 'мосполитех', 'Московский политех']):
-        response = ask_gigachat(message.text)
-        bot.send_message(message.chat.id, response)
+@bot.message_handler(func=lambda message: True)
+def handle_all_messages(message):
+    text = message.text.lower()
+    
+    if text in ['расписание', '/rasp']:
+        bot.send_message(message.chat.id, FAQ['расписание'])
+    elif text in ['контакты', '/contacts']:
+        bot.send_message(message.chat.id, FAQ['контакты'])
+    elif text in ['поступление']:
+        bot.send_message(message.chat.id, FAQ['поступление'])
+    elif text in ['общежитие']:
+        bot.send_message(message.chat.id, FAQ['общежитие'])
+    elif text in ['стипендия']:
+        bot.send_message(message.chat.id, FAQ['стипендия'])
+    elif text in ['учебные материалы', 'материалы']:
+        bot.send_message(message.chat.id, FAQ['учебные материалы'])
+    elif text in ['помощь', '/help']:
+        send_help(message)
+    elif text in FAQ:
+        bot.send_message(message.chat.id, FAQ[text])
     else:
-        bot.send_message(message.chat.id, "Я отвечаю только на вопросы, связанные с Московским политехническим университетом.")
+        if any(word in text for word in ['политех', 'моспол', 'универ', 'мосполитех', 'московский политех']):
+            try:
+                response = ask_gigachat(message.text)
+                bot.send_message(message.chat.id, response)
+            except Exception as e:
+                bot.send_message(message.chat.id, "⚠️ Произошла ошибка при обработке запроса. Пожалуйста, попробуйте позже.")
+        else:
+            bot.send_message(message.chat.id, "Я отвечаю только на вопросы, связанные с Московским политехническим университетом.", reply_markup=create_main_keyboard())
 
 def ask_gigachat(prompt: str) -> str:
     try:
@@ -123,4 +145,4 @@ def ask_gigachat(prompt: str) -> str:
 
 if __name__ == '__main__':
     print("Бот Московского политеха запущен...")
-    bot.p
+    bot.polling(none_stop=True)
