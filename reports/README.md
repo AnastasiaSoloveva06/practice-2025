@@ -5,4 +5,4 @@
 
 ## Примечание
 - Файлы могут быть в форматах DOCX, PDF и др.
-- Структура отчёта по проектной практике приведена в файле [practice_report_template.docx](..task/practice_report_template.docx).
+- Структура отчёта по проектной практике приведена в файле [practice_report_template.docx](task/practice_report_template.docx).
